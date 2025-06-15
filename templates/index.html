@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aetheria Startup</title>
+</head>
+<body onload="startJourney()">
+  <h1>Aetheria</h1>
+  <div id="question"></div>
+  <textarea id="answer"></textarea><br/>
+  <button onclick="submitAnswer()">Submit</button>
+  <div id="insight" style="margin-top:20px;"></div>
+  <script>
+    let userId = null;
+    async function startJourney() {
+      const res = await fetch('/start', { method: 'POST' });
+      const data = await res.json();
+      userId = data.user_id;
+      document.getElementById('question').innerText = data.question;
+    }
+    async function submitAnswer() {
+      const answer = document.getElementById('answer').value;
+      const res = await fetch('/interact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, answer: answer })
+      });
+      const data = await res.json();
+      if (data.complete) {
+        document.getElementById('question').innerText = 'Complete!';
+        document.getElementById('insight').innerText = data.insight;
+      } else {
+        document.getElementById('question').innerText = data.next_question;
+      }
+      document.getElementById('answer').value = '';
+    }
+  </script>
+</body>
+</html>
