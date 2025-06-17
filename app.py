@@ -1,18 +1,16 @@
-import os
-import openai
 from flask import Flask, request, jsonify
+import openai
+import os
 
-# Load your OpenAI API key from environment variable
+# Load OpenAI API key from environment variables
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
-# Route to test the app
 @app.route("/")
 def index():
     return "Aetheria backend is running."
 
-# Route where you send emotional text and get a summary back
 @app.route("/summarize", methods=["POST"])
 def summarize():
     user_input = request.json.get("text", "")
@@ -29,6 +27,9 @@ def summarize():
 
     summary = response.choices[0].message["content"]
     return jsonify({"summary": summary})
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 from flask import Flask, request, jsonify, render_template
 import uuid
